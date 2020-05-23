@@ -4,7 +4,7 @@ run 'npm run setup'
 run 'npm start'
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6a98e3d56f6b462db21fe187c6289f71)](https://app.codacy.com/gh/BuildForSDG/Team-019-backend?utm_source=github.com&utm_medium=referral&utm_content=BuildForSDG/Team-019-backend&utm_campaign=Badge_Grade_Dashboard)
-
+[![Codacy Badge](https://img.shields.io/badge/Code%20Quality-D-red)](https://img.shields.io/badge/Code%20Quality-D-red)
 
 ## About
 
@@ -14,9 +14,8 @@ Once this repo has been setup on Codacy by the TTL, replace the above badge with
 
 This is a simple JavaScript starter repo template for setting up your project. The setup contains
 
-- Jest: For runnung tests. We strongly recommend that JavaScript projects use Jest
-
-- Eslint & Prettier: For formatting code to match ESlint AirBnB coding standard. You might need to install the ESlint and Prettier plugins for your code editor to make the most of these utilities
+  - Jest: For runnung tests. We strongly recommend that JavaScript projects use Jest
+  - Eslint & Prettier: For formatting code to match ESlint AirBnB coding standard. You might need to install the ESlint and Prettier plugins for your code editor to make the most of these utilities
 
 ## Why
 
@@ -24,7 +23,6 @@ Talk about what problem this solves, what SDG(s) and SGD targets it addresses an
 
 ## Usage
  How would someone use what you have built, include URLs to the deployed app, service e.t.c when you have it setup
-
 
 ## Setup
 
@@ -40,12 +38,12 @@ This starter uses [Parcel](https://parceljs.org/getting_started.html) as the bun
 
 #### Hints
 
-- Run `npm install` or `yarn install` to get started. We'll assume you are using Yarn.
-- Install additional dependencies: `yarn add <dependency-name> [-D]`
-- Run tests: `yarn test`
-- Run tests with test coverage info: `yarn test:cover`
-- Check the codebase for proper syntax and formatting compliance: `yarn lint`
-- Run your app in local dev mode: `yarn start`. This puts the bundled app in a `dist` folder, set up a local web server at localhost:1234, and continues to watch for your code changes which it syncs with the local server. This means if you loaded the app in a browser, it will auto-refresh as you code along. Feel free to use whatever bundler best meets your needs. Parcel was only added as a sample and for those looking for a simple but effective solution to the hassle of bundlers. 
+  - Run `npm install` or `yarn install` to get started. We'll assume you are using Yarn.
+  - Install additional dependencies: `yarn add <dependency-name> [-D]`
+  - Run tests: `yarn test`
+  - Run tests with test coverage info: `yarn test:cover`
+  - Check the codebase for proper syntax and formatting compliance: `yarn lint`
+  - Run your app in local dev mode: `yarn start`. This puts the bundled app in a `dist` folder, set up a local web server at localhost:1234, and continues to watch for your code changes which it syncs with the local server. This means if you loaded the app in a browser, it will auto-refresh as you code along. Feel free to use whatever bundler best meets your needs. Parcel was only added as a sample and for those looking for a simple but effective solution to the hassle of bundlers. 
 
 ## Authors
 
@@ -68,4 +66,3 @@ It's powerful to always give credit.
 
 ## LICENSE
 MIT
-
