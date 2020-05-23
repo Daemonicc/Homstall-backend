@@ -1,6 +1,7 @@
 const ErrorResponse = require('../helpers/errorResponse');
 const asyncHandler = require('../middlewares/async');
 const Product = require('../models/Product');
+const Rating = require('../models/Rating');
 const { dataUri } = require('../middlewares/multer');
 const { uploader } = require('../config/cloudinaryConfig');
 
@@ -19,9 +20,7 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
   const product = await Product.find({ slug: req.params.slug });
 
   if (!product) {
-    return next(
-      new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404)
-    );
+    return next(new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404));
   }
 
   res.status(200).json({ success: true, data: product });
@@ -32,13 +31,8 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.createProduct = asyncHandler(async (req, res, next) => {
   // verify user is a farmer or admin
-  if (req.user.role !== 'farmer' || 'admin') {
-    return next(
-      new ErrorResponse(
-        'The user with not authorized',
-        400
-      )
-    );
+  if (req.user.role !== 'farmer' || req.user.role !== 'admin') {
+    return next(new ErrorResponse('The user with not authorized', 400));
   }
   // Add user to req,body
   req.body.user = req.user.id;
@@ -49,7 +43,7 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
   }
   const product = await Product.create(req.body);
 
-  res.status(201).json({
+  return res.status(201).json({
     success: true,
     data: product
   });
@@ -62,19 +56,12 @@ exports.updateProduct = asyncHandler(async (req, res, next) => {
   let product = await Product.find({ slug: req.params.slug });
 
   if (!product) {
-    return next(
-      new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404)
-    );
+    return next(new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404));
   }
 
   // Make sure user is product owner
   if (product.user.toString() !== req.user.id) {
-    return next(
-      new ErrorResponse(
-        `User ${req.params.id} is not authorized to update this product`,
-        401
-      )
-    );
+    return next(new ErrorResponse(`User ${req.params.id} is not authorized to update this product`, 401));
   }
 
   if (req.file) {
@@ -88,7 +75,7 @@ exports.updateProduct = asyncHandler(async (req, res, next) => {
     runValidators: true
   });
 
-  res.status(200).json({ success: true, data: product });
+  return res.status(200).json({ success: true, data: product });
 });
 
 // @desc      Delete product
@@ -98,22 +85,41 @@ exports.deleteProduct = asyncHandler(async (req, res, next) => {
   const product = await Product.find({ slug: req.params.slug });
 
   if (!product) {
-    return next(
-      new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404)
-    );
+    return next(new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404));
   }
 
   // Make sure user is product owner
   if (product.user.toString() !== req.user.id || req.user.role !== 'admin') {
-    return next(
-      new ErrorResponse(
-        `User ${req.params.id} is not authorized to delete this product`,
-        401
-      )
-    );
+    return next(new ErrorResponse(`User ${req.params.id} is not authorized to delete this product`, 401));
   }
 
   product.remove();
 
-  res.status(200).json({ success: true, data: {} });
+  return res.status(200).json({ success: true, data: {} });
+});
+
+// @desc      Rate product
+// @route     POST /api/v1/products/:slug/rate
+// @access    Private
+exports.rateProduct = asyncHandler(async (req, res, next) => {
+  const product = await Product.findOne({ slug: req.params.slug });
+
+  if (!product) {
+    return next(new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404));
+  }
+  // check if rating by user exist already
+  let rating = await Rating.findOne({ product: product.id, user: req.user.id });
+
+  // create product rating
+  if (rating) {
+    return next(new ErrorResponse(`Product ${req.params.slug} already rated by user`, 404));
+  }
+
+  rating = await Rating.create({
+    user: req.user.id,
+    product: product.id,
+    rating: req.body.rating
+  });
+
+  return res.status(200).json({ success: true, data: rating });
 });

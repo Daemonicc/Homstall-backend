@@ -8,7 +8,8 @@ const {
   getProduct,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  rateProduct
 } = require('../controllers/productController');
 
 const { protect, authorize } = require('../middlewares/verifyAuth');
@@ -23,4 +24,9 @@ router
   .get(getProduct)
   .put(protect, updateProduct)
   .delete(protect, deleteProduct);
+
+router
+  .route('/:slug/rate')
+  .post(protect, authorize('farmer', 'user', 'admin'), rateProduct);
+
 module.exports = router;

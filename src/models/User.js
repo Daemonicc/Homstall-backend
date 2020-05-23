@@ -35,6 +35,13 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     select: false
   },
+  rating: {
+    type: Number,
+    min: [1, 'Rating must be at least 1'],
+    max: [5, 'Rating must can not be more than 5'],
+    required: true,
+    default: 1
+  },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
   createdAt: {
