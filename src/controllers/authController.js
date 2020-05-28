@@ -4,8 +4,9 @@ const asyncHandler = require('../middlewares/async');
 const sendEmail = require('../helpers/sendEmail');
 const User = require('../models/User');
 
-
 // Get token from model, create cookie and send response
+
+
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
   const token = user.getSignedJwtToken();
