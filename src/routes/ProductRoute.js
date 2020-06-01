@@ -22,11 +22,11 @@ router
 router
   .route('/:slug')
   .get(getProduct)
-  .put(protect, updateProduct)
-  .delete(protect, deleteProduct);
+  .put(protect, authorize('farmer', 'admin'), updateProduct)
+  .delete(protect, authorize('farmer', 'admin'), deleteProduct);
 
 router
   .route('/:slug/rate')
-  .post(protect, authorize('farmer', 'user', 'admin'), rateProduct);
+  .post(protect, rateProduct);
 
 module.exports = router;

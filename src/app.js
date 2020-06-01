@@ -27,6 +27,9 @@ const products = require('./routes/ProductRoute');
 
 const app = express();
 
+
+app.set('views', path.join(__dirname, 'public'));
+
 // Body parser
 app.use(express.json());
 
@@ -65,27 +68,8 @@ app.use('*', cloudinaryConfig);
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/products', products);
 
-app.post('/upload', multerUploads, (req, res) => {
-  if (req.file) {
-    const file = dataUri(req).content;
-    const { email, password } = req.body;
-    uploader.upload(file).then((result) => {
-      const image = result.url;
-      return res.status(200).json({
-        messge: 'Your image has been uploded successfully to cloudinary',
-        data: {
-          image,
-          email,
-          password
-        }
-      });
-    }).catch((err) => res.status(400).json({
-      messge: 'someting went wrong while processing your request',
-      data: {
-        err
-      }
-    }));
-  }
+app.get('/', (req, res) => {
+  res.render('index.html');
 });
 
 

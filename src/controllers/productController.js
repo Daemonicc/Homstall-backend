@@ -30,10 +30,6 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/products
 // @access    Private
 exports.createProduct = asyncHandler(async (req, res, next) => {
-  // verify user is a farmer or admin
-  if (req.user.role !== 'farmer' || req.user.role !== 'admin') {
-    return next(new ErrorResponse('The user with not authorized', 400));
-  }
   // Add user to req,body
   req.body.user = req.user.id;
   if (req.file) {
@@ -53,14 +49,14 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/products/:slug
 // @access    Private
 exports.updateProduct = asyncHandler(async (req, res, next) => {
-  let product = await Product.find({ slug: req.params.slug });
+  let product = await Product.findOne({ slug: req.params.slug });
 
   if (!product) {
     return next(new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404));
   }
 
   // Make sure user is product owner
-  if (product.user.toString() !== req.user.id) {
+  if (product.user.toString() !== req.user.id && req.user.role !== 'admin') {
     return next(new ErrorResponse(`User ${req.params.id} is not authorized to update this product`, 401));
   }
 
@@ -82,15 +78,15 @@ exports.updateProduct = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/v1/products/:slug
 // @access    Private
 exports.deleteProduct = asyncHandler(async (req, res, next) => {
-  const product = await Product.find({ slug: req.params.slug });
+  const product = await Product.findOne({ slug: req.params.slug });
 
   if (!product) {
     return next(new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404));
   }
 
   // Make sure user is product owner
-  if (product.user.toString() !== req.user.id || req.user.role !== 'admin') {
-    return next(new ErrorResponse(`User ${req.params.id} is not authorized to delete this product`, 401));
+  if (product.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(new ErrorResponse(`User ${req.user.id} is not authorized to delete this product`, 401));
   }
 
   product.remove();
@@ -107,12 +103,16 @@ exports.rateProduct = asyncHandler(async (req, res, next) => {
   if (!product) {
     return next(new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404));
   }
+
+  //Ensure user cannot rate his own product
+
+  if(product.user.toString() === req.user.id){
+    return next(new ErrorResponse(`Product cannot be rated by user`, 401));
+  }
   // check if rating by user exist already
   let rating = await Rating.findOne({ product: product.id, user: req.user.id });
-
-  // create product rating
   if (rating) {
-    return next(new ErrorResponse(`Product ${req.params.slug} already rated by user`, 404));
+    return next(new ErrorResponse(`Product ${req.params.slug} already rated by user`, 401));
   }
 
   rating = await Rating.create({
